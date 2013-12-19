@@ -1,0 +1,22 @@
+{
+  "name": "serialtft",
+  "version": "0.0.1",
+  "description": "HobbyTronics SerialTFT library",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "mocha test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesfoley/serialtft.git"
+  },
+  "keywords": [
+    "serialtft"
+  ],
+  "author": "James Foley",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/jamesfoley/serialtft/issues"
+  },
+  "homepage": "https://github.com/jamesfoley/serialtft"
+}
