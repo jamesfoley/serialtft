@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/jamesfoley/serialtft/issues"
   },
-  "homepage": "https://github.com/jamesfoley/serialtft"
+  "homepage": "https://github.com/jamesfoley/serialtft",
+  "devDependencies": {
+    "mocha": "",
+    "should": "",
+    "serialport": ""
+  }
 }
