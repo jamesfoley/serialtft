@@ -2,9 +2,8 @@
   "name": "serialtft",
   "version": "0.0.1",
   "description": "HobbyTronics SerialTFT library",
-  "main": "lib/main.js",
+  "main": "serialtft.js",
   "scripts": {
-    "test": "mocha test/*.js"
   },
   "repository": {
     "type": "git",
@@ -19,9 +18,8 @@
     "url": "https://github.com/jamesfoley/serialtft/issues"
   },
   "homepage": "https://github.com/jamesfoley/serialtft",
-  "devDependencies": {
-    "mocha": "",
-    "should": "",
-    "serialport": ""
+  "dependencies": {
+    "serialport": "",
+    "merge": ""
   }
 }
