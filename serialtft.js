@@ -1,14 +1,18 @@
-var events = require('events');
-var util = require('util');
-var merge = require('merge');
-var serialport = require('serialport');
-var sleep = require('sleep');
+var events = require('events'),
+	util = require('util'),
+	merge = require('merge'),
+	serialport = require('serialport'),
+	sleep = require('sleep'),
+	mathjs = require('mathjs'),
+	math = mathjs();
 
 //	Default options
 var _options = {
     device: "/dev/ttyAMA0",
     baud_rate: 9600,
-    clear_on_exit: true
+    clear_on_exit: true,
+    screen_width: 160,
+    screen_height: 128
 }
 
 var commands = {
@@ -45,8 +49,17 @@ var SerialTFT = function(options){
 
 	//	Merge options
 	this.options = merge(_options, options)
+
 	//	Create serial connection variable
 	var connection = null;
+
+	//	Screen info
+	this.screen = {
+		'width': this.options.screen_width,
+		'height': this.options.screen_height,
+		'width_half': this.options.screen_width / 2,
+		'height_half': this.options.screen_height / 2,
+	}
 
 	//	Font options
 	this.font = {
@@ -91,6 +104,12 @@ var SerialTFT = function(options){
  		this.connection.on('open', function(){
 			parent.emit('connect');
 		});
+
+		this.connection.on('close', function(){
+			if (clear_on_exit){
+				this.clear_screen();
+			}
+		})
 	}
 
 	var _write = function(command){
@@ -211,6 +230,20 @@ var SerialTFT = function(options){
 	//	Draw a circle filled with foreground color
 	this.draw_filled_circle = function(x, y, radius, color){
 		_write([commands.begin, commands.draw_filled_circle, new Buffer([x]), new Buffer([y]), new Buffer([radius]), new Buffer([color]), commands.end]);
+	}
+
+	//	Draw a line from origin x,y of length radius at degrees minutes
+	this.analog_hand = function(origin_x, origin_y, radius, position, color){
+
+		var angle = (position / 60.0) * (2 * math.pi);
+
+		var x = origin_x + radius * math.sin(angle)
+		var y = origin_y - radius * math.cos(angle)
+
+		var x_a = origin_x + 6 * math.sin(angle)
+		var y_a = origin_y - 6 * math.cos(angle)
+
+		this.draw_line(math.round(x_a), math.round(y_a), math.round(x), math.round(y), color)
 	}
 }
  

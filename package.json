@@ -21,6 +21,7 @@
   "dependencies": {
     "serialport": "",
     "merge": "",
-    "sleep": ""
+    "sleep": "",
+    "mathjs": ""
   }
 }
