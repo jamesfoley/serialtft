@@ -154,9 +154,67 @@ var SerialTFT = function(options){
 	this.draw_bitmap = function(file, x, y){
 		_write([commands.begin, commands.display_bitmap, new Buffer([x]), new Buffer([y]), file, commands.end]);
 	}
-}
 
-//	Inherit event emitter
+	//	Go to pixel location
+	this.goto_pixel = function(pixel_x, pixel_y){
+		_write([commands.begin, commands.pos_pixel, new Buffer([pixel_x]), new Buffer([pixel_y]), commands.end]);
+	}
+
+	//	Go to character position, depends on font size
+	this.goto_char = function(char_x, char_y){
+		_write([commands.begin, commands.pos_text, new Buffer([char_x]), new Buffer([char_y]), commands.end]);
+	}
+
+	//	Draw pixel
+	this.draw_pixel = function(x, y, color){
+		_write([commands.begin, commands.draw_pixel, new Buffer([x]), new Buffer([y]), new Buffer([color]), commands.end]);
+	}
+
+	//	Draw a line in foreground color
+	this.draw_line = function(x1, y1, x2, y2, color){
+		_write([commands.begin, commands.draw_line, new Buffer([x1]), new Buffer([y1]), new Buffer([x2]), new Buffer([y2]), new Buffer([color]), commands.end]);
+	}
+
+	//	Draw box fast
+	this.draw_box_fast = function(x1, y1, x2, y2, color){
+		this.draw_line(x1, y1, x2, y1, color);
+        this.draw_line(x2, y1, x2, y2, color);
+        this.draw_line(x2, y2, x1, y2, color);
+        this.draw_line(x1, y2, x1, y1, color);
+	}
+
+	//	Draw a rectangle outline in foreground color
+	this.draw_box = function(x1, y1, x2, y2, color){
+		_write([commands.begin, commands.draw_box, new Buffer([x1]), new Buffer([y1]), new Buffer([x2]), new Buffer([y2]), new Buffer([color]), commands.end]);
+	} 
+
+	//	Draw rect
+	this.draw_rect = function(x, y, width, height, color){
+		this.draw_box(x, y, x + width, y + height, color);
+	} 
+
+	//	Draw a rectangle filled with foreground color
+	this.draw_filled_box = function(x1, y1, x2, y2, color){
+		_write([commands.begin, commands.draw_filled_box, new Buffer([x1]), new Buffer([y1]), new Buffer([x2]), new Buffer([y2]), new Buffer([color]), commands.end]);
+	}  
+
+	//	Draw filled rect
+	this.draw_filled_rect = function(x, y, width, height, color){
+		this.draw_filled_box(x, y, x + width, y + height, color);
+	}
+
+	//	Draw a circle outline in foreground color
+	this.draw_circle = function(x, y, radius, color){
+		_write([commands.begin, commands.draw_circle, new Buffer([x]), new Buffer([y]), new Buffer([radius]), new Buffer([color]), commands.end]);
+	}
+
+	//	Draw a circle filled with foreground color
+	this.draw_filled_circle = function(x, y, radius, color){
+		_write([commands.begin, commands.draw_filled_circle, new Buffer([x]), new Buffer([y]), new Buffer([radius]), new Buffer([color]), commands.end]);
+	}
+}
+ 
+// 	Inherit event emitter
 util.inherits(SerialTFT, events.EventEmitter);
 
 module.exports = SerialTFT;
