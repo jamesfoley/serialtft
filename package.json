@@ -20,6 +20,7 @@
   "homepage": "https://github.com/jamesfoley/serialtft",
   "dependencies": {
     "serialport": "",
-    "merge": ""
+    "merge": "",
+    "sleep": ""
   }
 }
