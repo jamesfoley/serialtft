@@ -60,7 +60,25 @@ var SerialTFT = function(options){
 		'cyan': 4,
 		'magenta': 5,
 		'yellow': 6,
-		'white': 7
+		'white': 7,
+
+		'user_black': 8,
+		'user_blue': 9,
+		'user_red': 10,
+		'user_green': 11,
+		'user_cyan': 12,
+		'user_magenta': 13,
+		'user_yellow': 14,
+		'user_white': 15,
+
+		'user_1': 8,
+		'user_2': 9,
+		'user_3': 10,
+		'user_4': 11,
+		'user_5': 12,
+		'user_6': 13,
+		'user_7': 14,
+		'user_8': 15
 	}
 
 	// TFT library command set
@@ -234,9 +252,11 @@ var SerialTFT = function(options){
 	}
 
 	// Draw a line from origin x,y of length radius at degrees minutes
-	this.analog_hand = function(origin_x, origin_y, radius, position, color){
+	this.analog_hand = function(origin_x, origin_y, radius, position, intervals, color){
 
-		var angle = (position / 60.0) * (2 * math.pi);
+		intervals = intervals == undefined ? 60.0:intervals;
+
+		var angle = (position / intervals) * (2 * math.pi);
 
 		var x = origin_x + radius * math.sin(angle)
 		var y = origin_y - radius * math.cos(angle)
@@ -245,6 +265,35 @@ var SerialTFT = function(options){
 		var y_a = origin_y - 6 * math.cos(angle)
 
 		this.draw_line(math.round(x_a), math.round(y_a), math.round(x), math.round(y), color)
+	}
+
+	// Convert a hex color to RGB values
+	this.hex_to_rgb = function(hex){
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		return result ? {
+			r: parseInt(result[1], 16),
+			g: parseInt(result[2], 16),
+			b: parseInt(result[3], 16)
+		} : null;
+	}
+
+	// Set user color to Hex
+	this.set_color_hex = function(color, hex){
+		hex = this.hex_to_rgb(hex);
+		this.set_color_rgb(color, hex.r, hex.g, hex.b);
+	}
+
+	// Set user color to RGB
+	this.set_color_rgb = function(color, r, g, b){
+		rgb565 = (((31*(r+4))/255)<<11) | (((63*(g+2))/255)<<5) | ((31*(b+4))/255)
+		this.set_color_packed(color, rgb565);
+	}
+
+	// Set user color to packed buffer
+	this.set_color_packed = function(color, packed_color){
+		var div = math.floor(packed_color/256);
+		var rem = packed_color % 256;
+		_write([this.commands.begin, this.commands.set_color, new Buffer([color]), new Buffer([div]), new Buffer([rem]), this.commands.end]);
 	}
 }
  

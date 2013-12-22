@@ -1,6 +1,6 @@
 {
   "name": "serialtft",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "HobbyTronics SerialTFT library",
   "main": "serialtft.js",
   "scripts": {
