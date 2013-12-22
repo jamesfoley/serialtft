@@ -6,7 +6,7 @@ var events = require('events'),
 	mathjs = require('mathjs'),
 	math = mathjs();
 
-//	Default options
+// Default options
 var _options = {
     device: "/dev/ttyAMA0",
     baud_rate: 9600,
@@ -41,19 +41,19 @@ var commands = {
  
 var SerialTFT = function(options){
  
- 	//	Call event emitter
+ 	// Call event emitter
 	events.EventEmitter.call(this);
 
-	//	Define this as parent
+	// Define this as parent
 	var parent = this;
 
-	//	Merge options
+	// Merge options
 	this.options = merge(_options, options)
 
-	//	Create serial connection variable
+	// Create serial connection variable
 	var connection = null;
 
-	//	Screen info
+	// Screen info
 	this.screen = {
 		'width': this.options.screen_width,
 		'height': this.options.screen_height,
@@ -61,14 +61,14 @@ var SerialTFT = function(options){
 		'height_half': this.options.screen_height / 2,
 	}
 
-	//	Font options
+	// Font options
 	this.font = {
 		'small': 1,
 		'medium': 2,
 		'large': 3
 	};
 
-	//	Screen rotation
+	// Screen rotation
 	this.rotation = {
 		'portrait_left': 0,
 		'portrait_right': 2,
@@ -76,7 +76,7 @@ var SerialTFT = function(options){
 		'landscape': 3
 	}
 
-	//	Colors
+	// Colors
 	this.color = {
 		'black': 0,
 	    'blue': 1,
@@ -88,19 +88,19 @@ var SerialTFT = function(options){
 	    'white': 7
 	}
 
-	//	Call connect function after next tick
+	// Call connect function after next tick
 	process.nextTick(function(){
 		parent.connect();
 	})
  
-	//	Connect function
+	// Connect function
 	this.connect = function(){
 
 		this.connection = new serialport.SerialPort(this.options.device, {
 			baudrate: this.options.baud_rate
 		});
  
- 		//	Emit connect event
+ 		// Emit connect event
  		this.connection.on('open', function(){
 			parent.emit('connect');
 		});
@@ -122,13 +122,13 @@ var SerialTFT = function(options){
 		}
 	}
 
-	//	Clear screen
+	// Clear screen
 	this.clear_screen = function(){
 		_write([commands.begin, commands.clear, commands.end]);
 		sleep.usleep(3000);
 	}
 
-	//	Write a text string
+	// Write a text string
 	this.write = function(text){
 		var packet_size = 16;
 
@@ -143,58 +143,63 @@ var SerialTFT = function(options){
 		}
 	}
 
-	//	Write a text string followed by a carriage return
+	// Write a text string followed by a carriage return
 	this.write_line = function(text){
 		this.write(text);
 		_write(commands.return);
 	}
 
-	//	Set up font size
+	// Set up font size
 	this.font_size = function(font_size){
 		_write([commands.begin, commands.font_size, new Buffer([font_size]), commands.end]);
 	}
 
-	//	Set up screen Rotation
+	// Set up screen Rotation
 	this.screen_rotation = function(screen_rotation){
 		_write([commands.begin, commands.screen_rotation, new Buffer([screen_rotation]), commands.end]);
 	}
 
-	//	Set the active foreground colour
+	// Set screen brightness
+	this.brightness = function(brightness){
+		_write([commands.begin, commands.brightness, new Buffer([brightness]), commands.end]);
+	}
+
+	// Set the active foreground colour
 	this.fg_color = function(color){
 		_write([commands.begin, commands.fg_color, new Buffer([color]), commands.end]);
 	}
 
-	//	Set the active background colour
+	// Set the active background colour
 	this.bg_color = function(color){
 		_write([commands.begin, commands.bg_color, new Buffer([color]), commands.end]);
 	}
 
-	//	Draw a bitmap from the SD card
+	// Draw a bitmap from the SD card
 	this.draw_bitmap = function(file, x, y){
 		_write([commands.begin, commands.display_bitmap, new Buffer([x]), new Buffer([y]), file, commands.end]);
 	}
 
-	//	Go to pixel location
+	// Go to pixel location
 	this.goto_pixel = function(pixel_x, pixel_y){
 		_write([commands.begin, commands.pos_pixel, new Buffer([pixel_x]), new Buffer([pixel_y]), commands.end]);
 	}
 
-	//	Go to character position, depends on font size
+	// Go to character position, depends on font size
 	this.goto_char = function(char_x, char_y){
 		_write([commands.begin, commands.pos_text, new Buffer([char_x]), new Buffer([char_y]), commands.end]);
 	}
 
-	//	Draw pixel
+	// Draw pixel
 	this.draw_pixel = function(x, y, color){
 		_write([commands.begin, commands.draw_pixel, new Buffer([x]), new Buffer([y]), new Buffer([color]), commands.end]);
 	}
 
-	//	Draw a line in foreground color
+	// Draw a line in foreground color
 	this.draw_line = function(x1, y1, x2, y2, color){
 		_write([commands.begin, commands.draw_line, new Buffer([x1]), new Buffer([y1]), new Buffer([x2]), new Buffer([y2]), new Buffer([color]), commands.end]);
 	}
 
-	//	Draw box fast
+	// Draw box fast
 	this.draw_box_fast = function(x1, y1, x2, y2, color){
 		this.draw_line(x1, y1, x2, y1, color);
         this.draw_line(x2, y1, x2, y2, color);
@@ -202,37 +207,37 @@ var SerialTFT = function(options){
         this.draw_line(x1, y2, x1, y1, color);
 	}
 
-	//	Draw a rectangle outline in foreground color
+	// Draw a rectangle outline in foreground color
 	this.draw_box = function(x1, y1, x2, y2, color){
 		_write([commands.begin, commands.draw_box, new Buffer([x1]), new Buffer([y1]), new Buffer([x2]), new Buffer([y2]), new Buffer([color]), commands.end]);
 	} 
 
-	//	Draw rect
+	// Draw rect
 	this.draw_rect = function(x, y, width, height, color){
 		this.draw_box(x, y, x + width, y + height, color);
 	} 
 
-	//	Draw a rectangle filled with foreground color
+	// Draw a rectangle filled with foreground color
 	this.draw_filled_box = function(x1, y1, x2, y2, color){
 		_write([commands.begin, commands.draw_filled_box, new Buffer([x1]), new Buffer([y1]), new Buffer([x2]), new Buffer([y2]), new Buffer([color]), commands.end]);
 	}  
 
-	//	Draw filled rect
+	// Draw filled rect
 	this.draw_filled_rect = function(x, y, width, height, color){
 		this.draw_filled_box(x, y, x + width, y + height, color);
 	}
 
-	//	Draw a circle outline in foreground color
+	// Draw a circle outline in foreground color
 	this.draw_circle = function(x, y, radius, color){
 		_write([commands.begin, commands.draw_circle, new Buffer([x]), new Buffer([y]), new Buffer([radius]), new Buffer([color]), commands.end]);
 	}
 
-	//	Draw a circle filled with foreground color
+	// Draw a circle filled with foreground color
 	this.draw_filled_circle = function(x, y, radius, color){
 		_write([commands.begin, commands.draw_filled_circle, new Buffer([x]), new Buffer([y]), new Buffer([radius]), new Buffer([color]), commands.end]);
 	}
 
-	//	Draw a line from origin x,y of length radius at degrees minutes
+	// Draw a line from origin x,y of length radius at degrees minutes
 	this.analog_hand = function(origin_x, origin_y, radius, position, color){
 
 		var angle = (position / 60.0) * (2 * math.pi);
