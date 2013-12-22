@@ -96,6 +96,7 @@ var SerialTFT = function(options){
 	// Connect function
 	this.connect = function(){
 
+		// Create serial connection to screen
 		this.connection = new serialport.SerialPort(this.options.device, {
 			baudrate: this.options.baud_rate
 		});
@@ -104,14 +105,9 @@ var SerialTFT = function(options){
  		this.connection.on('open', function(){
 			parent.emit('connect');
 		});
-
-		this.connection.on('close', function(){
-			if (clear_on_exit){
-				this.clear_screen();
-			}
-		})
 	}
 
+	// Write to serial connection
 	var _write = function(command){
 		if (Array.isArray(command)){
 			command.forEach(function(com){
