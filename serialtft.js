@@ -54,16 +54,16 @@ var SerialTFT = function(options){
 	// Colors
 	this.color = {
 		'black': 0,
-	    'blue': 1,
-	    'red': 2,
-	    'green': 3,
-	    'cyan': 4,
-	    'magenta': 5,
-	    'yellow': 6,
-	    'white': 7
+		'blue': 1,
+		'red': 2,
+		'green': 3,
+		'cyan': 4,
+		'magenta': 5,
+		'yellow': 6,
+		'white': 7
 	}
 
-	//	TFT library set
+	// TFT library command set
 	this.commands = {
 		'begin': new Buffer([27]),
 		'end': new Buffer([255]),
@@ -198,9 +198,9 @@ var SerialTFT = function(options){
 	// Draw box fast
 	this.draw_box_fast = function(x1, y1, x2, y2, color){
 		this.draw_line(x1, y1, x2, y1, color);
-        this.draw_line(x2, y1, x2, y2, color);
-        this.draw_line(x2, y2, x1, y2, color);
-        this.draw_line(x1, y2, x1, y1, color);
+		this.draw_line(x2, y1, x2, y2, color);
+		this.draw_line(x2, y2, x1, y2, color);
+		this.draw_line(x1, y2, x1, y1, color);
 	}
 
 	// Draw a rectangle outline in foreground color
