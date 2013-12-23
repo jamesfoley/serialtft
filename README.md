@@ -5,6 +5,14 @@ NodeJS clone of Gadgetoid's Serial-TFT-Python library for the HobbyTronics Seria
 
 The original python library can be found at https://github.com/Gadgetoid/Serial-TFT-Python
 
+Install
+----
+
+```
+npm install serialtft
+```
+
+
 Example
 ----
 
