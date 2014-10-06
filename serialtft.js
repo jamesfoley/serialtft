@@ -4,7 +4,7 @@ var events = require('events'),
 	serialport = require('serialport'),
 	sleep = require('sleep'),
 	mathjs = require('mathjs'),
-	math = mathjs();
+	math = mathjs;
 
 // Default options
 var _options = {
